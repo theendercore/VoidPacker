@@ -5,7 +5,7 @@ import com.github.ajalt.clikt.parameters.options.help
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.types.enum
-import com.theendercore.Version
+import com.theendercore.util.Version
 import com.theendercore.data.PackInfo
 import com.theendercore.toml
 import kotlinx.serialization.encodeToString
@@ -28,7 +28,7 @@ class ExampleCommand : CliktCommand(name = "example", help = "Generates examples
                     PackInfo.PublishingInfo(
                         Version("1.0.0"),
                         "asas",
-                        "test.md"
+                        File("./test.md")
                     )
                 )
                 File("example_pack.toml").writeText(toml.encodeToString(packInfo))
