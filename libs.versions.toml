@@ -1,0 +1,24 @@
+
+[versions]
+kotlin = "1.9.23"
+
+arrow = "1.2.1"
+detekt = "1.23.6"
+
+semver = "1.4.2"
+clikt = "4.3.0"
+log4j = "2.0.9"
+
+[libraries]
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+arrow-optics = { module = "io.arrow-kt:arrow-optics", version.ref = "arrow" }
+arrow-fx-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow"}
+
+semver = { module = "io.github.z4kn4fein:semver", version.ref = "semver" }
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+log4j = { module = "org.slf4j:slf4j-log4j12", version.ref = "log4j" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
