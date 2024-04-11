@@ -14,6 +14,7 @@ detekt {
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -30,8 +31,10 @@ dependencies {
 
 
     implementation(libs.kotlinx.serialization)
-    implementation(libs.ktoml)
+//    implementation(libs.ktoml)
     implementation(libs.compress)
+
+    implementation(libs.tomlkt)
 
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")

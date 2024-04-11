@@ -4,6 +4,10 @@ import com.theendercore.log
 import java.nio.file.Files
 import java.nio.file.Paths
 
+const val PACK_INFO = "pack.toml"
+const val CHANGELOG = "changelog.md"
+
+
 
 const val DATA_PACKS = "./data_packs"
 const val RESOURCE_PACKS = "./resource_packs"

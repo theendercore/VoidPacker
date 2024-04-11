@@ -1,10 +1,18 @@
 package com.theendercore.data
 
-import kotlinx.serialization.Serializable
 import io.github.z4kn4fein.semver.Version
+import kotlinx.serialization.Serializable
+
 @Suppress("PropertyName")
 @Serializable
-data class PackMetaImport(val pack: Pack) {
+data class PackMcMeta(val pack: Pack) {
+    constructor(
+        pack_format: Int,
+        description: String,
+        supported_formats: Pack.SupportedFormats? = null,
+        pack_version: Version? = null,
+    ) : this(Pack(pack_format, description, supported_formats, pack_version))
+
     @Serializable
     data class Pack(
         val pack_format: Int,

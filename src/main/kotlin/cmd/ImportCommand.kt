@@ -5,7 +5,7 @@ import arrow.core.raise.either
 import arrow.core.raise.ensure
 import com.github.ajalt.clikt.core.CliktCommand
 import com.theendercore.data.PackInfo
-import com.theendercore.data.PackMetaImport
+import com.theendercore.data.PackMcMeta
 import com.theendercore.json
 import com.theendercore.log
 import com.theendercore.toml
@@ -91,15 +91,14 @@ fun import(packFolder: File, name: String) = either {
 
     val packMeta = packFolder.resolve("pack.mcmeta")
     ensure(packMeta.exists()) { ImportError("pack.mcmeta not found in '$name'") }
-    val packInfo =
-        PackInfo(formatName(name), json.decodeFromString<PackMetaImport>(packMeta.readText()))
+    val packInfo = PackInfo(formatName(name), json.decodeFromString<PackMcMeta>(packMeta.readText()))
 
 
     if (dataFolder.exists()) dataFolder.copyRecursively(newPack.resolve("data"))
     if (assetsFolder.exists()) assetsFolder.copyRecursively(newPack.resolve("assets"))
 
-    newPack.resolve("pack.toml").writeText(toml.encodeToString(packInfo))
-    newPack.resolve("changelog.md").createNewFile()
+    newPack.resolve(PACK_INFO).writeText(toml.encodeToString(packInfo))
+    newPack.resolve(CHANGELOG).createNewFile()
 
     val img = packFolder.resolve("pack.png")
     if (img.exists()) img.copyTo(newPack.resolve("pack.png"))

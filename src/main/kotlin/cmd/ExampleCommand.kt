@@ -7,9 +7,7 @@ import com.github.ajalt.clikt.parameters.options.prompt
 import com.github.ajalt.clikt.parameters.types.enum
 import com.theendercore.data.PackInfo
 import com.theendercore.toml
-import com.theendercore.util.EXAMPLE
-import com.theendercore.util.Version
-import com.theendercore.util.dirValidator
+import com.theendercore.util.*
 import kotlinx.serialization.encodeToString
 import java.io.File
 
@@ -22,18 +20,18 @@ class ExampleCommand : CliktCommand(name = "example", help = "Generates examples
     override fun run() {
         dirValidator()
         when (exampleType) {
-            ExampleType.PACK_TOML -> File("$EXAMPLE/example_pack.toml").writeText(
+            ExampleType.PACK_TOML -> File("$EXAMPLE/example_$PACK_INFO").writeText(
                 toml.encodeToString(
                     PackInfo(
                         PackInfo.PackMeta(
-                            20,
+                            Version("1.20.1"),
                             "Test desc"
                         ),
                         PackInfo.PublishingInfo(
                             "Example",
                             Version("1.0.0"),
                             "dave#the\$game",
-                            File("./changelog.md")
+                            File("./$CHANGELOG")
                         )
                     )
                 )
