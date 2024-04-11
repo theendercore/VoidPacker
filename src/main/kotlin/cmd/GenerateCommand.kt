@@ -8,10 +8,7 @@ import com.theendercore.data.PackMcMeta
 import com.theendercore.json
 import com.theendercore.log
 import com.theendercore.toml
-import com.theendercore.util.PACK_INFO
-import com.theendercore.util.RESOURCE_PACKS
-import com.theendercore.util.dataVersionLookup
-import com.theendercore.util.dirValidator
+import com.theendercore.util.*
 import io.github.z4kn4fein.semver.Version
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
@@ -21,8 +18,13 @@ import java.io.File
 class GenerateCommand : CliktCommand(name = "generate", help = "Generates the packs") {
 //    val test: String by option().prompt("Your test").help("test value")
 
+    private val TEMP_EXPORT = File("$TEMP/export")
+
     override fun run() {
         dirValidator()
+        if (TEMP_EXPORT.exists()) TEMP_EXPORT.deleteRecursively()
+        TEMP_EXPORT.mkdirs()
+
         val metadata = mutableListOf<PublishingInfo>()
         val resourcePacks = File(RESOURCE_PACKS).listFiles()
         if (resourcePacks == null) {
@@ -30,23 +32,21 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
             return
         }
 
-        val lost = listOf("hello", "hi", "good day")
-
         resourcePacks.forEach loop@{
             either {
                 try {
+                    val tempFolder = TEMP_EXPORT.resolve(it.name)
 
                     // data / assets folder
-//                    log.info(it.resolve("assets").toString())
+                    it.resolve("assets").copyRecursively(tempFolder.resolve("assets"))
 
                     // pack.png
                     val packPng = it.resolve("pack.png")
-//                    log.info(if (packPng.exists()) packPng.toString() else "default.png")
+                    (if (packPng.exists()) packPng else File("./default.png"))
+                        .copyTo(tempFolder.resolve("pack.png"))
 
                     // pack.mcmeta
                     val (packMeta, publishingInfo) = toml.decodeFromString<PackInfo>(it.resolve(PACK_INFO).readText())
-
-
                     val minVersion = dataVersionLookup(packMeta.minVersion)
                     val packMcMeta = PackMcMeta(
                         minVersion, packMeta.description,
@@ -54,7 +54,7 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
                             PackMcMeta.Pack.SupportedFormats(minVersion, dataVersionLookup(Config.get().maxVersion))
                         else null
                     )
-//                    log.info(json.encodeToString(packMcMeta))
+                    tempFolder.resolve("pack.mcmeta").writeText(json.encodeToString(packMcMeta))
 
                     // PublishingInfo
                     val processedInfo = PublishingInfo(
@@ -67,8 +67,10 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
                         it.resolve(publishingInfo.changeLog).readText()
                     )
                     metadata.add(processedInfo)
+                    metadata.add(processedInfo)
 
-//                    log.info(processedInfo.toString())
+                    createZipFile(tempFolder, File("$EXPORT/${it.name}.zip"))
+
 
                 } catch (e: Exception) {
                     raise(ErrorGenerate(e.toString()))
@@ -77,9 +79,8 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
             }.leftOrNull()?.let { log.error(it.msg) }
         }
 
-        log.info(json.encodeToString(metadata))
-        log.info(toml.encodeToString(metadata))
-
+        File("$EXPORT/publish.toml").writeText(toml.encodeToString(metadata))
+        TEMP_EXPORT.deleteRecursively()
     }
 }
 
