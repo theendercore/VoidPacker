@@ -25,7 +25,7 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
         if (TEMP_EXPORT.exists()) TEMP_EXPORT.deleteRecursively()
         TEMP_EXPORT.mkdirs()
 
-        val metadata = mutableListOf<PublishingInfo>()
+        val metadata = mutableListOf<Metadata>()
         val resourcePacks = File(RESOURCE_PACKS).listFiles()
         if (resourcePacks == null) {
             log.error("$RESOURCE_PACKS is empty or not created!")
@@ -57,16 +57,15 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
                     tempFolder.resolve("pack.mcmeta").writeText(json.encodeToString(packMcMeta))
 
                     // PublishingInfo
-                    val processedInfo = PublishingInfo(
+                    val processedInfo = Metadata(
                         publishingInfo,
-                        if (packMeta.multiVersion) PublishingInfo.VersionRange(
+                        if (packMeta.multiVersion) Metadata.VersionRange(
                             packMeta.minVersion,
                             Config.get().maxVersion
                         )
-                        else PublishingInfo.VersionRange(packMeta.minVersion),
+                        else Metadata.VersionRange(packMeta.minVersion),
                         it.resolve(publishingInfo.changeLog).readText()
                     )
-                    metadata.add(processedInfo)
                     metadata.add(processedInfo)
 
                     createZipFile(tempFolder, File("$EXPORT/${it.name}.zip"))
@@ -79,7 +78,7 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
             }.leftOrNull()?.let { log.error(it.msg) }
         }
 
-        File("$EXPORT/publish.toml").writeText(toml.encodeToString(metadata))
+        File("$EXPORT/publish.json").writeText(json.encodeToString(metadata))
         TEMP_EXPORT.deleteRecursively()
     }
 }
@@ -90,7 +89,7 @@ data class WarnGenerate(val msg: String) : GenerateErrors
 data class ErrorGenerate(val msg: String) : GenerateErrors
 
 @Serializable
-data class PublishingInfo(
+data class Metadata(
     val title: String,
     val projectId: String,
     val version: Version,
