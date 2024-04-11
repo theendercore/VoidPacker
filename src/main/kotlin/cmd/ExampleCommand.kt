@@ -22,20 +22,23 @@ class ExampleCommand : CliktCommand(name = "example", help = "Generates examples
     override fun run() {
         dirValidator()
         when (exampleType) {
-            ExampleType.PACK_TOML -> {
-                val packInfo = PackInfo(
-                    PackInfo.PackMeta(
-                        Version("1.20.1"),
-                        "Test desc",
-                    ),
-                    PackInfo.PublishingInfo(
-                        Version("1.0.0"),
-                        "asas",
-                        File("./test.md")
+            ExampleType.PACK_TOML -> File("$EXAMPLE/example_pack.toml").writeText(
+                toml.encodeToString(
+                    PackInfo(
+                        PackInfo.PackMeta(
+                            20,
+                            "Test desc"
+                        ),
+                        PackInfo.PublishingInfo(
+                            "Example",
+                            Version("1.0.0"),
+                            "dave#the\$game",
+                            File("./changelog.md")
+                        )
                     )
                 )
-                File("$EXAMPLE/example_pack.toml").writeText(toml.encodeToString(packInfo))
-            }
+            )
+
         }
     }
 }

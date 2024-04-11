@@ -10,9 +10,10 @@ const val RESOURCE_PACKS = "./resource_packs"
 const val EXPORT = "./export"
 const val IMPORT = "./import"
 const val EXAMPLE = "./example"
+const val TEMP = "./temp"
 
 fun dirValidator() {
-    listOf(DATA_PACKS, RESOURCE_PACKS, EXPORT, IMPORT, EXAMPLE)
+    listOf(DATA_PACKS, RESOURCE_PACKS, EXPORT, IMPORT, EXAMPLE, TEMP)
         .forEach {
             val directoryPath = Paths.get(it)
             if (!Files.exists(directoryPath)) {
