@@ -23,9 +23,16 @@ dependencies {
 
     implementation(libs.semver)
     implementation(libs.clikt)
-    implementation(libs.log4j)
+
+    implementation(libs.log4j.api)
+    implementation(libs.log4j.core)
+    implementation(libs.log4j.slf4j)
+
+
     implementation(libs.kotlinx.serialization)
     implementation(libs.ktoml)
+    implementation(libs.compress)
+
 
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }

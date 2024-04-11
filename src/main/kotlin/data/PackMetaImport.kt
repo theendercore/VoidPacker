@@ -9,8 +9,8 @@ data class PackMetaImport(val pack: Pack) {
     data class Pack(
         val pack_format: Int,
         val description: String,
-        val supported_formats: SupportedFormats?,
-        val pack_version: Version?,
+        val supported_formats: SupportedFormats? = null,
+        val pack_version: Version? = null,
     ) {
         @Serializable
         data class SupportedFormats(
