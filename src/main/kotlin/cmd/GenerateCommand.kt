@@ -70,6 +70,7 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
 
                     createZipFile(tempFolder, File("$EXPORT/${it.name}.zip"))
 
+                    log.info("Finished ${it.name}!")
 
                 } catch (e: Exception) {
                     raise(ErrorGenerate(e.toString()))
@@ -77,8 +78,7 @@ class GenerateCommand : CliktCommand(name = "generate", help = "Generates the pa
 
             }.leftOrNull()?.let { log.error(it.msg) }
         }
-
-        File("$EXPORT/publish.json").writeText(json.encodeToString(metadata))
+        File(METADATA_FILE).writeText(toml.encodeToString(MetadataHolder(metadata)))
         TEMP_EXPORT.deleteRecursively()
     }
 }
@@ -87,6 +87,9 @@ sealed interface GenerateErrors
 
 data class WarnGenerate(val msg: String) : GenerateErrors
 data class ErrorGenerate(val msg: String) : GenerateErrors
+
+@Serializable
+data class MetadataHolder(val data : List<Metadata>)
 
 @Serializable
 data class Metadata(

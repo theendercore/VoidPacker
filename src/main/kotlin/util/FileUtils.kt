@@ -16,6 +16,10 @@ const val IMPORT = "./import"
 const val EXAMPLE = "./example"
 const val TEMP = "./temp"
 
+const val METADATA_FILE = "$EXPORT/metadata.toml"
+
+
+
 fun dirValidator() {
     listOf(DATA_PACKS, RESOURCE_PACKS, EXPORT, IMPORT, EXAMPLE, TEMP)
         .forEach {
