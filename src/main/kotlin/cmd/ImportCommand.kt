@@ -6,6 +6,7 @@ import arrow.core.raise.ensure
 import com.github.ajalt.clikt.core.CliktCommand
 import com.theendercore.data.PackInfo
 import com.theendercore.data.PackMcMeta
+import com.theendercore.data.PackType
 import com.theendercore.json
 import com.theendercore.log
 import com.theendercore.toml
@@ -81,9 +82,11 @@ fun import(packFolder: File, name: String) = either {
 
     ensure(dataFolder.exists() || assetsFolder.exists())
     { ImportError("No 'data' or 'assets' folder found for '$name'!") }
-    val newPack =
-        if (dataFolder.exists()) File("$DATA_PACKS/$name")
-        else File("$RESOURCE_PACKS/$name")
+    val type = if (dataFolder.exists()) PackType.DATA else PackType.RESOURCE
+
+
+    val newPack = if (type.isData()) File("$DATA_PACKS/$name")
+    else File("$RESOURCE_PACKS/$name")
 
     ensure(!newPack.exists()) { ImportWarn("Pack '$name' already exists. Skipping!") }
 
@@ -91,7 +94,7 @@ fun import(packFolder: File, name: String) = either {
 
     val packMeta = packFolder.resolve("pack.mcmeta")
     ensure(packMeta.exists()) { ImportError("pack.mcmeta not found in '$name'") }
-    val packInfo = PackInfo(formatName(name), json.decodeFromString<PackMcMeta>(packMeta.readText()))
+    val packInfo = PackInfo(type, formatName(name), json.decodeFromString<PackMcMeta>(packMeta.readText()))
 
 
     if (dataFolder.exists()) dataFolder.copyRecursively(newPack.resolve("data"))

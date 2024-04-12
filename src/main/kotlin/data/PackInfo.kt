@@ -1,9 +1,6 @@
 package com.theendercore.data
 
-import com.theendercore.util.CHANGELOG
-import com.theendercore.util.FileSerializer
-import com.theendercore.util.Version
-import com.theendercore.util.reversDataLookup
+import com.theendercore.util.*
 import io.github.z4kn4fein.semver.Version
 import kotlinx.serialization.Serializable
 import net.peanuuutz.tomlkt.TomlComment
@@ -15,10 +12,17 @@ data class PackInfo(
     val publishingInfo: PublishingInfo
 ) {
     constructor(
-        name: String, import: PackMcMeta, projectId: String = "null", version: Version = Version("1.0.0"),
-        changeLog: File =  File("./$CHANGELOG")
+        type: PackType, name: String, import: PackMcMeta,
+        projectId: String = "null",
+        version: Version = Version("1.0.0"),
+        changeLog: File = File("./$CHANGELOG")
     ) : this(
-        PackMeta(reversDataLookup(import.pack.pack_format) ?: Version("0.0.0"), import.pack.description),
+        PackMeta(
+            (if (type.isData()) reversDataLookup(import.pack.pack_format)
+            else revereResourceLookup((import.pack.pack_format)))
+                ?: Version("0.0.0"),
+            import.pack.description
+        ),
         PublishingInfo(name, import.pack.pack_version ?: version, projectId, changeLog)
     )
 
@@ -44,3 +48,7 @@ data class PackInfo(
     }
 }
 
+enum class PackType(val folder: String) {
+    DATA("data"), RESOURCE("assets");
+    fun isData() = this == DATA
+}

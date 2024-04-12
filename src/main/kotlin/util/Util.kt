@@ -17,21 +17,15 @@ val data = mapOf(
     26 to listOf(Version("1.20.3"), Version("1.20.4"))
 )
 
+val resource = mapOf(
+    15 to listOf(Version("1.20.1")),
+    18 to listOf(Version("1.20.2")),
+    22 to listOf(Version("1.20.3"), Version("1.20.4"))
+)
+
 fun List<Version>.isValid(version: Version) = (version in (this.first()..this.last()))
 
 fun reversDataLookup(version: Int) = data[version]?.first()
-fun dataVersionLookup(version: Version): Int {
-    data.forEach {
-        if (it.value.isValid(version)) return it.key
-
-    }
-    return 0
-}
-fun resourceVersionLookup(version: Version) =
-    when (version) {
-        Version("1.20.1") -> 15
-        Version("1.20.2") -> 18
-        Version("1.20.3") -> 22
-        Version("1.20.4") -> 22
-        else -> -1
-    }
+fun revereResourceLookup(version: Int) = resource[version]?.first()
+fun dataVersionLookup(version: Version): Int? = data.entries.find { it.value.isValid(version) }?.key
+fun resourceVersionLookup(version: Version): Int? = resource.entries.find { it.value.isValid(version) }?.key
